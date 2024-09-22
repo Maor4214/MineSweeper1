@@ -23,7 +23,7 @@ var gGame = {
 }
 
 
-const MINE = '<img src="/imgs/mine.png">'
+const MINE = '<img src="imgs/mine1.png">'
 const NEGS1 = '<img src="imgs/1.png">'
 const NEGS2 = '<img src="imgs/2.png">'
 const NEGS3 = '<img src="imgs/3.png">'
