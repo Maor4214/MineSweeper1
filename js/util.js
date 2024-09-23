@@ -70,3 +70,6 @@ function findNegsMines(rowIdx, colIdx, mat) {
     }
     return closeMinesCount
 }
+
+
+
