@@ -54,6 +54,27 @@ function playSound(sound) {
 }
 
 
+
+function revealEmptyNegsCells(i, j) {
+    if (i < 0 || i >= gBoard.length || j < 0 || j >= gBoard[0].length) return
+    if (gBoard[i][j].isShown || gBoard[i][j].isMarked) return
+
+    gBoard[i][j].isShown = true
+    renderCell({ i, j }, getNegsShown(gBoard[i][j].minesAroundCount))
+    gCellsShown++
+
+    if (!gBoard[i][j].minesAroundCount) {
+        revealEmptyNegsCells(i - 1, j)
+        revealEmptyNegsCells(i + 1, j)
+        revealEmptyNegsCells(i, j - 1)
+        revealEmptyNegsCells(i, j + 1)
+        revealEmptyNegsCells(i - 1, j - 1)
+        revealEmptyNegsCells(i - 1, j + 1)
+        revealEmptyNegsCells(i + 1, j - 1)
+        revealEmptyNegsCells(i + 1, j + 1)
+    }
+}
+
 function findNegsMines(rowIdx, colIdx, mat) {
     var closeMinesCount = 0
     // console.log('rowIdx, collIdx', rowIdx, colIdx)
@@ -65,11 +86,78 @@ function findNegsMines(rowIdx, colIdx, mat) {
             if (j < 0 || j >= mat[0].length) continue
             if (i === rowIdx && j === colIdx) continue
             if (mat[i][j].isMine) closeMinesCount++
-            
+
         }
     }
     return closeMinesCount
 }
 
 
+function findCellsForMines(currI, currj) {
+    var emptyCells = []
 
+    for (var i = 0; i < gBoard.length; i++) {
+        for (var j = 0; j < gBoard[0].length; j++) {
+            if (i === currI && j === currj) continue
+            var emptyCell = { i, j }
+            emptyCells.push(emptyCell)
+
+        }
+    }
+
+    return emptyCells
+}
+
+
+function showNegs(rowIdx, colIdx) {
+    for (var i = rowIdx - 1; i <= rowIdx + 1; i++) {
+        if (i < 0 || i >= gBoard.length) continue
+
+        for (var j = colIdx - 1; j <= colIdx + 1; j++) {
+            if (j < 0 || j >= gBoard[0].length) continue
+            if (i === rowIdx && j === colIdx) continue
+
+            if (gBoard[i][j].isMine) renderCell({ i, j }, NORMALMINE)
+            if (!gBoard[i][j].isMine) renderCell({ i, j }, getNegsShown(gBoard[i][j].minesAroundCount))
+
+        }
+    }
+
+}
+
+function unShowNegs(rowIdx, colIdx) {
+    for (var i = rowIdx - 1; i <= rowIdx + 1; i++) {
+        if (i < 0 || i >= gBoard.length) continue
+
+        for (var j = colIdx - 1; j <= colIdx + 1; j++) {
+            if (j < 0 || j >= gBoard[0].length) continue
+            if (i === rowIdx && j === colIdx) continue
+            if (gBoard[i][j].isShown) continue
+
+            renderCell({ i, j }, UNMARKED)
+
+        }
+    }
+
+}
+
+function unRevealEmptyNegsCells(i, j) {
+    // console.log('i, j', i, j)
+    if (i < 0 || i >= gBoard.length || j < 0 || j >= gBoard[0].length) return
+    if (gBoard[i][j].isMarked || !gBoard[i][j].isShown) return
+
+    gBoard[i][j].isShown = false
+    // console.log('should get info')
+    renderCell({ i, j },UNMARKED)
+
+    if (!gBoard[i][j].minesAroundCount) {
+        unRevealEmptyNegsCells(i - 1, j)
+        unRevealEmptyNegsCells(i + 1, j)
+        unRevealEmptyNegsCells(i, j - 1)
+        unRevealEmptyNegsCells(i, j + 1)
+        unRevealEmptyNegsCells(i - 1, j - 1)
+        unRevealEmptyNegsCells(i - 1, j + 1)
+        unRevealEmptyNegsCells(i + 1, j - 1)
+        unRevealEmptyNegsCells(i + 1, j + 1)
+    }
+}

@@ -8,25 +8,39 @@
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
     <title>MineSweeper</title>
     <link rel="stylesheet" href="css/style.css">
-    <p class="lvl">Choose difficulty:</p>
-    <button onclick="changeLvl('ez')">Easy</button>
-    <button onclick="changeLvl('med')">Meduim</button>
-    <button onclick="changeLvl('hard')">hard</button>
-   <p><box class="emoji-game" onclick="onInitGame()"></box></p>
+    <p>Hints:</p>
+    <p class="hints"><span class="hint1" onclick="hint('1')"></span>
+        <span class="hint2" onclick="hint('2')"></span>
+        <span class="hint3" onclick="hint('3')"></span></p>
+    <div class="info"> <span class="life">Life: <span>3</span></span> <span><box class="emoji-game" onclick="onInitGame()"></box></span> <span class="timer">00</span></div>
+   <!-- <p><box class="emoji-game" onclick="onInitGame()"></box></p>
     <div class="all-div">
         <div class="life">Life: <span>3</span></div>
         <div class="timer">00</div>
-    </div>
+    </div> -->
 
 </head>
 
 <body onload="onInitGame()">
-    <h1></h1>
     <table>
         <tbody class="board"></tbody>
     </table>
+
+    <p class="lvl">Choose difficulty:</p>
+    <button onclick="changeLvl('ez')">Easy</button>
+    <button onclick="changeLvl('med')">Meduim</button>
+    <button onclick="changeLvl('hard')">hard</button>
+
+    <p>Undo 1 Move:</p>
+    <p><button onclick="undoMove()">Undo</button></p>
+
+    <button class="mega-hint" onclick="megaHint()">Mega Hint!</button>
+    <div>Mega Hint can only be used once per game Choose wisely</div>
     <script src="js/util.js"></script>
     <script src="js/game.js"></script>
+    <script src="js/helpuser.js"></script>
 </body>
 
 </html>
+
+

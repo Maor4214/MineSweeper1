@@ -14,26 +14,20 @@ body{
     border-color: black;
     border-style: solid;
     cursor: pointer;
+    margin-right: 40px;
 }
 
 
-div.all-div {
-    margin: auto;   
-    width: 400px;
+.life{
+    margin-right: 20px;
 }
 
-div.timer { 
-    float: right;
-    width: 150px;
-}
-
-
-div.life {
-    float: left;
-    width: 150px;
+.info{
+    margin-bottom: 10px;
 }
 
 table{
+
     margin: auto;
 }
 
@@ -43,5 +37,15 @@ table{
 
 button{
     margin-bottom: 10px;
+    cursor: pointer;
+}
+
+.hint1{
+    cursor: pointer;
+}
+.hint2{
+    cursor: pointer;
+}
+.hint3{
     cursor: pointer;
 }

@@ -16,8 +16,7 @@ var gLevel = {
 }
 
 var gGame = {
-    isOn: true,
-    secsPassed: 0
+    isOn: true
 }
 
 var gFlaggedMines = 0
@@ -25,6 +24,15 @@ var gCellsShown = 0
 
 var startTime
 var gInterval
+var gFirstClickInMegaHint = null
+
+var hint1Used = false
+var hint2Used = false
+var hint3Used = false
+var isHint = false
+
+
+var gLastCellClicked
 
 const MINE = '<img src="imgs/mine1.png">'
 const NEGS1 = '<img src="imgs/1.png">'
@@ -39,6 +47,8 @@ const UNMARKED = '<img src="imgs/questionmark.png">'
 const EMPTY = '<img src="imgs/empty.png">'
 const FLAG = '<img src="imgs/flag.png">'
 const NORMALMINE = '<img src="imgs/mine.png">'
+const HINT_ON = '<img src="imgs/hinton.png">'
+const HINT_OFF = '<img src="imgs/hintoff.png">'
 
 const PLAYING_IMG = '🤓'
 const WINING_IMG = '😎'
@@ -47,6 +57,19 @@ const LOSING_IMG = '☠️'
 const WIN_SOUND = `./sounds/winsound.mp3`
 const LOSE_SOUND = `./sounds/losesound.mp3`
 
+
+const HINT1 = document.querySelector('.hint1')
+const HINT2 = document.querySelector('.hint2')
+const HINT3 = document.querySelector('.hint3')
+HINT1.innerHTML = HINT_ON
+HINT2.innerHTML = HINT_ON
+HINT3.innerHTML = HINT_ON
+
+
+var gMegaHint = {
+    isUsed: false,
+    timeUsed: 1
+}
 
 
 function onInitGame() {
@@ -61,8 +84,15 @@ function onInitGame() {
     var elEmoji = document.querySelector('.emoji-game')
     elEmoji.innerHTML = PLAYING_IMG
     var elLife = document.querySelector('.life span')
-     elLife.innerHTML = gLife
-    
+    elLife.innerHTML = gLife
+    gMegaHint.isUsed = false
+    gMegaHint = {
+        isUsed: false,
+        timeUsed: 1
+    }
+    gFirstClickInMegaHint = null
+    clearInterval(gInterval)
+
 }
 
 
@@ -107,21 +137,37 @@ function renderBoard(board) {
 
 function showCell(i, j) {
     var currPosClick = { i, j }
+
     if (gIsFirstClick) {
         startTimer()
         spawnMines(gLevel.mines, i, j)
         getNegsMines()
-        console.log('gBoard', gBoard)
+        // console.log('gBoard', gBoard)
         gIsFirstClick = false
     }
+    if (isHint)
+        showNegs(i, j)
+    setTimeout(() => {
+        isHint = false
+        unShowNegs(i, j)
+    }, 2000);
 
+    if (gMegaHint.isUsed) {
+        if (!gFirstClickInMegaHint) {
+            gFirstClickInMegaHint = currPosClick
+            // console.log('firstClick', gFirstClickInMegaHint)
+        } else {
+            console.log('test')
+            activeHint(gFirstClickInMegaHint, currPosClick)
+        } return
+    }
     if (gBoard[i][j].isShown) return
     if (!gGame.isOn) return
 
-    if (gBoard[i][j].isMine) {
+    if (gBoard[i][j].isMine && !gMegaHint.isUsed) {
         console.log('boom!')
         gLife--
-        console.log('glive', gLife)
+        // console.log('glive', gLife)
         if (!gLife) {
             endGame('lose')
             gBoard[i][j].isShown = true
@@ -160,26 +206,34 @@ function showCell(i, j) {
     if (isWin()) {
         endGame('win')
     }
+    gLastCellClicked = currPosClick
 
 
 }
 
 
 
-
-
-
-
 function spawnMines(mines, currI, currj) {
+
+    findCellsForMines(currI, currj)
+
     for (var i = 0; i < mines; i++) {
 
-        var newRowIdx = getRandomInt(0, gBoard.length)
-        var newColIdx = getRandomInt(0, gBoard[0].length)
-        if (gBoard[currI][currj] === gBoard[newRowIdx][newColIdx]) spawnMines(mines, currI, currj)
-        else gBoard[newRowIdx][newColIdx].isMine = true
+        var avalibelCells = findCellsForMines(currI, currj)
+        // console.log('avalibelCells', avalibelCells)
+
+        for (var i = 0; i < mines; i++) {
+            var newMineIdx = getRandomInt(0, avalibelCells.length)
+            var newMine = avalibelCells[newMineIdx]
+            // console.log('newMine', newMine)
+            gBoard[newMine.i][newMine.j].isMine = true
+            // console.log('gBoard[newMine.i][newMine.j] ', gBoard[newMine.i][newMine.j])
+            avalibelCells.splice(newMineIdx, 1)
+            // console.log('avalibelCells', avalibelCells)
+
+        }
+
     }
-    // gBoard[3][3].isMine = true
-    // gBoard[2][3].isMine = true
 }
 
 
@@ -225,47 +279,8 @@ function toggleMark(event, i, j) {
     }
 }
 
-
-function revealEmptyNegsCells(i, j) {
-    if (i < 0 || i >= gBoard.length || j < 0 || j >= gBoard[0].length) return
-    if (gBoard[i][j].isShown || gBoard[i][j].isMarked) return
-
-    gBoard[i][j].isShown = true
-    // var minesAroundCount = findNegsMines(i, j, gBoard)
-    renderCell({ i, j }, getNegsShown(gBoard[i][j].minesAroundCount))
-    gCellsShown++
-
-    if (!gBoard[i][j].minesAroundCount) {
-        revealEmptyNegsCells(i - 1, j)
-        revealEmptyNegsCells(i + 1, j)
-        revealEmptyNegsCells(i, j - 1)
-        revealEmptyNegsCells(i, j + 1)
-        revealEmptyNegsCells(i - 1, j - 1)
-        revealEmptyNegsCells(i - 1, j + 1)
-        revealEmptyNegsCells(i + 1, j - 1)
-        revealEmptyNegsCells(i + 1, j + 1)
-    }
-}
-
-
-function findEmptyCells() {
-    var emptyCells = []
-
-    for (var i = 0; i < gBoard.length; i++) {
-        for (var j = 0; j < gBoard[0].length; j++) {
-            var currCell = gBoard[i][j]
-            if (currCell.isShown) continue
-            var emptyCell = { i, j }
-            emptyCells.push(emptyCell)
-
-        }
-    }
-    return emptyCells
-}
-
 function endGame(result) {
     stopTimer()
-    document.querySelector('.timer').innerTEXT = '00'
     gGame.isOn = false
     if (result === 'lose') {
         showAllMines()
@@ -273,10 +288,9 @@ function endGame(result) {
         var elEmoji = document.querySelector('.emoji-game')
         elEmoji.innerHTML = LOSING_IMG
 
-    
+
     }
     if (result === 'win') {
-        console.log('damm bro')
         playSound(WIN_SOUND)
         var elEmoji = document.querySelector('.emoji-game')
         elEmoji.innerHTML = WINING_IMG
@@ -295,30 +309,6 @@ function getNegsMines() {
 
     }
 }
-function changeLvl(lvl) {
-    switch (lvl) {
-        case 'ez':
-            gLevel.size = 4
-            gLevel.mines = 2
-
-            break;
-        case 'med':
-            gLevel.size = 8
-            gLevel.mines = 14
-            break;
-        case 'hard':
-            gLevel.size = 12
-            gLevel.mines = 32
-            break
-
-        default:
-            gLevel.size = 4
-            gLevel.mines = 2
-            break;
-    }
-    onInitGame()
-}
-
 
 function showAllMines() {
     for (var i = 0; i < gBoard.length; i++) {
@@ -331,7 +321,7 @@ function showAllMines() {
 }
 
 function isWin() {
-    console.log('gFlaggedMines', gFlaggedMines)
+    // console.log('gFlaggedMines', gFlaggedMines)
     return gFlaggedMines + gCellsShown === gLevel.size ** 2
 
 }
@@ -354,6 +344,4 @@ function updateTimer() {
         `${seconds.toString().padStart(2, '0')}`
 
 }
-
-
 
