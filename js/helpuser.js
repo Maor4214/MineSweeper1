@@ -6,23 +6,33 @@ function changeLvl(lvl) {
         case 'ez':
             gLevel.size = 4
             gLevel.mines = 2
-
+            restartGame()
             break;
         case 'med':
             gLevel.size = 8
             gLevel.mines = 14
+            restartGame()
             break;
         case 'hard':
             gLevel.size = 12
             gLevel.mines = 32
-            break
+            restartGame()
+            break;
+
+        case 'custome':
+            gLevel.size = +prompt('Choose the size of the board')
+            gLevel.mines = +prompt('Choose how much mine you want to spawn')
+            restartGame()
+            manuallyCreateMine()
+            isManuallyCreate = true
+            break;
 
         default:
             gLevel.size = 4
             gLevel.mines = 2
-            break;
+            restartGame()
+            break
     }
-    onInitGame()
 }
 
 
@@ -112,13 +122,26 @@ function undoMove() {
 
     }
     if (!undoCellIdx.isMine) {
-       
-       unRevealEmptyNegsCells(gLastCellClicked.i, gLastCellClicked.j)
-       renderCell(gLastCellClicked, UNMARKED)
-       
-       
+
+        unRevealEmptyNegsCells(gLastCellClicked.i, gLastCellClicked.j)
+        renderCell(gLastCellClicked, UNMARKED)
+
+
         countUndo++
     }
 
+
+}
+
+function manuallyCreateMine() {
+    // var count = 0
+    // gBoard[minePos.i][minePos.j].isMine
+    // count++
+    // console.log('count', count)
+    for (var i = 0; i < gLevel.mines; i++) {
+        var iPos = +prompt('Choose Row')
+        var jPos = +prompt('Choose Column')
+        gBoard[iPos][jPos].isMine = true
+    }
 
 }

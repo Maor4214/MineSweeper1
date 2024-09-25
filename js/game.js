@@ -34,6 +34,8 @@ var isHint = false
 
 var gLastCellClicked
 
+var isManuallyCreate = false
+
 const MINE = '<img src="imgs/mine1.png">'
 const NEGS1 = '<img src="imgs/1.png">'
 const NEGS2 = '<img src="imgs/2.png">'
@@ -76,21 +78,12 @@ function onInitGame() {
 
     gBoard = buildBoard(gLevel.size)
     renderBoard(gBoard)
-    gIsFirstClick = true
-    gLife = 3
-    gGame.isOn = true
-    gCellsShown = 0
+    isManuallyCreate = false
     gFlaggedMines = 0
     var elEmoji = document.querySelector('.emoji-game')
     elEmoji.innerHTML = PLAYING_IMG
     var elLife = document.querySelector('.life span')
     elLife.innerHTML = gLife
-    gMegaHint.isUsed = false
-    gMegaHint = {
-        isUsed: false,
-        timeUsed: 1
-    }
-    gFirstClickInMegaHint = null
     clearInterval(gInterval)
 
 }
@@ -140,17 +133,18 @@ function showCell(i, j) {
 
     if (gIsFirstClick) {
         startTimer()
-        spawnMines(gLevel.mines, i, j)
+        if (!isManuallyCreate) spawnMines(gLevel.mines, i, j)
         getNegsMines()
         // console.log('gBoard', gBoard)
         gIsFirstClick = false
     }
-    if (isHint)
+    if (isHint) {
         showNegs(i, j)
-    setTimeout(() => {
-        isHint = false
-        unShowNegs(i, j)
-    }, 2000);
+        setTimeout(() => {
+            isHint = false
+            unShowNegs(i, j)
+        }, 2000);
+    }
 
     if (gMegaHint.isUsed) {
         if (!gFirstClickInMegaHint) {
@@ -191,7 +185,7 @@ function showCell(i, j) {
     if (!gBoard[i][j].isMine) {
         console.log('not mine whoho!')
 
-        if (!gBoard[i][j].minesAroundCount) {
+        if (!isHint && !gBoard[i][j].minesAroundCount) {
             revealEmptyNegsCells(i, j)
 
         }
@@ -345,3 +339,25 @@ function updateTimer() {
 
 }
 
+
+
+function restartGame() {
+    gIsFirstClick = true
+    gLife = 3
+    gGame.isOn = true
+    gCellsShown = 0
+    gFlaggedMines = 0
+    gMegaHint.isUsed = false
+    gMegaHint = {
+        isUsed: false,
+        timeUsed: 1
+    }
+    gFirstClickInMegaHint = null
+    HINT1.innerHTML = HINT_ON
+    HINT2.innerHTML = HINT_ON
+    HINT3.innerHTML = HINT_ON
+    hint1Used = false
+    hint2Used = false
+    hint3Used = false
+    onInitGame()
+}

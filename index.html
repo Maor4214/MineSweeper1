@@ -12,7 +12,7 @@
     <p class="hints"><span class="hint1" onclick="hint('1')"></span>
         <span class="hint2" onclick="hint('2')"></span>
         <span class="hint3" onclick="hint('3')"></span></p>
-    <div class="info"> <span class="life">Life: <span>3</span></span> <span><box class="emoji-game" onclick="onInitGame()"></box></span> <span class="timer">00</span></div>
+    <div class="info"> <span class="life">Life: <span>3</span></span> <span><box class="emoji-game" onclick="restartGame()"></box></span> <span class="timer">00</span></div>
    <!-- <p><box class="emoji-game" onclick="onInitGame()"></box></p>
     <div class="all-div">
         <div class="life">Life: <span>3</span></div>
@@ -29,10 +29,12 @@
     <p class="lvl">Choose difficulty:</p>
     <button onclick="changeLvl('ez')">Easy</button>
     <button onclick="changeLvl('med')">Meduim</button>
-    <button onclick="changeLvl('hard')">hard</button>
+    <button onclick="changeLvl('hard')">Hard</button>
+    <button onclick="changeLvl('custome')">Custome</button>
 
-    <p>Undo 1 Move:</p>
-    <p><button onclick="undoMove()">Undo</button></p>
+    <p><button onclick="undoMove()">Undo</button>
+    <button onclick="safeClick()">Safe Click</button>
+    </p>
 
     <button class="mega-hint" onclick="megaHint()">Mega Hint!</button>
     <div>Mega Hint can only be used once per game Choose wisely</div>
