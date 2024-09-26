@@ -1,6 +1,7 @@
 body {
     zoom: 1.8;
-    background-image: url('/imgs/normalBack.png');
+    /* background-image: url(''); */
+    background-image: url('../imgs/normalBack.png');
     background-size: cover;
     text-align: center;
     color: bisque;

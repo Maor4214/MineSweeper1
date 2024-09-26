@@ -181,7 +181,7 @@ function safeClick() {
 
     setTimeout(() => {
         if (!gBoard[safeCell.i][safeCell.j].isMine)
-            elSafeCell.style = 'border-radius: 0px;'
+        elSafeCell.style = 'border-radius: 0px;'
         elSafeCell.style = 'border-color: none;'
         elSafeCell.style = 'border-style: none;'
 
@@ -193,12 +193,12 @@ function safeClick() {
 function switchToDarkMode() {
     if (gIsDarkMode) {
         gIsDarkMode = false
-        document.body.style = `background-image: url('/imgs/normalBack.png');`
+        document.body.style = `background-image: url('imgs/normalBack.png');`
     }
 
     else if (!gIsDarkMode) {
         gIsDarkMode = true
-        document.body.style = `background-image: url('/imgs/darkBack.png');`
+        document.body.style = `background-image: url('imgs/darkBack.png');`
 
     }
 }
