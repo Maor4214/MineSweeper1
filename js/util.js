@@ -161,3 +161,16 @@ function unRevealEmptyNegsCells(i, j) {
         unRevealEmptyNegsCells(i + 1, j + 1)
     }
 }
+
+ function findSafeCells(board){
+   var safeCells = []
+    for(var i = 0; i < board.length; i++){
+        for(var j = 0; j < board[0].length; j++){
+            if (gBoard[i][j].isMine) continue
+            if (gBoard[i][j].isShown) continue
+            if (gBoard[i][j].isMarked) continue
+            var safeCell = {i , j}
+            safeCells.push(safeCell)
+        }
+    } return safeCells
+ }

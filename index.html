@@ -8,16 +8,13 @@
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
     <title>MineSweeper</title>
     <link rel="stylesheet" href="css/style.css">
+    <button onclick="switchToDarkMode()">Dark Mode</button>
     <p>Hints:</p>
     <p class="hints"><span class="hint1" onclick="hint('1')"></span>
         <span class="hint2" onclick="hint('2')"></span>
         <span class="hint3" onclick="hint('3')"></span></p>
+    <p class="safe-click">Safe clicks remain: <span></span></p>
     <div class="info"> <span class="life">Life: <span>3</span></span> <span><box class="emoji-game" onclick="restartGame()"></box></span> <span class="timer">00</span></div>
-   <!-- <p><box class="emoji-game" onclick="onInitGame()"></box></p>
-    <div class="all-div">
-        <div class="life">Life: <span>3</span></div>
-        <div class="timer">00</div>
-    </div> -->
 
 </head>
 
@@ -34,10 +31,11 @@
 
     <p><button onclick="undoMove()">Undo</button>
     <button onclick="safeClick()">Safe Click</button>
+    <button onclick="manuallyCreateMine()">Manually spawn mines</button>
     </p>
 
     <button class="mega-hint" onclick="megaHint()">Mega Hint!</button>
-    <div>Mega Hint can only be used once per game Choose wisely</div>
+    <!-- <div>Mega Hint can only be used once per game Choose wisely</div> -->
     <script src="js/util.js"></script>
     <script src="js/game.js"></script>
     <script src="js/helpuser.js"></script>

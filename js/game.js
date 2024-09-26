@@ -31,6 +31,7 @@ var hint2Used = false
 var hint3Used = false
 var isHint = false
 
+var gSafeClicks = 3
 
 var gLastCellClicked
 
@@ -60,6 +61,11 @@ const WIN_SOUND = `./sounds/winsound.mp3`
 const LOSE_SOUND = `./sounds/losesound.mp3`
 
 
+const elLife = document.querySelector('.life span')
+const elEmoji = document.querySelector('.emoji-game')
+const elSafeClicks = document.querySelector('.safe-click span')
+
+
 const HINT1 = document.querySelector('.hint1')
 const HINT2 = document.querySelector('.hint2')
 const HINT3 = document.querySelector('.hint3')
@@ -80,11 +86,11 @@ function onInitGame() {
     renderBoard(gBoard)
     isManuallyCreate = false
     gFlaggedMines = 0
-    var elEmoji = document.querySelector('.emoji-game')
     elEmoji.innerHTML = PLAYING_IMG
-    var elLife = document.querySelector('.life span')
     elLife.innerHTML = gLife
+    elSafeClicks.innerHTML = gSafeClicks
     clearInterval(gInterval)
+    
 
 }
 
@@ -133,9 +139,15 @@ function showCell(i, j) {
 
     if (gIsFirstClick) {
         startTimer()
-        if (!isManuallyCreate) spawnMines(gLevel.mines, i, j)
-        getNegsMines()
+        if (isManuallyCreate) {
+            userSpawnMines(i, j)
+            if (gUserSapwnMinesCount < gLevel.mines) return
+            getNegsMines()
+            gIsFirstClick = false
+            return
+        } else { spawnMines(gLevel.mines, i, j) }
         // console.log('gBoard', gBoard)
+        getNegsMines()
         gIsFirstClick = false
     }
     if (isHint) {
@@ -166,7 +178,6 @@ function showCell(i, j) {
             endGame('lose')
             gBoard[i][j].isShown = true
             renderCell(currPosClick, MINE)
-            var elLife = document.querySelector('.life span')
             elLife.innerHTML = gLife
         }
         else {
@@ -177,7 +188,6 @@ function showCell(i, j) {
                 gBoard[i][j].isShown = false
                 renderCell(currPosClick, UNMARKED)
             }, 1000)
-            var elLife = document.querySelector('.life span')
             elLife.innerHTML = gLife
         }
 
@@ -279,14 +289,12 @@ function endGame(result) {
     if (result === 'lose') {
         showAllMines()
         playSound(LOSE_SOUND)
-        var elEmoji = document.querySelector('.emoji-game')
         elEmoji.innerHTML = LOSING_IMG
 
 
     }
     if (result === 'win') {
         playSound(WIN_SOUND)
-        var elEmoji = document.querySelector('.emoji-game')
         elEmoji.innerHTML = WINING_IMG
 
     }
@@ -353,11 +361,14 @@ function restartGame() {
         timeUsed: 1
     }
     gFirstClickInMegaHint = null
+    gUserSapwnMinesCount = 0 
     HINT1.innerHTML = HINT_ON
     HINT2.innerHTML = HINT_ON
     HINT3.innerHTML = HINT_ON
     hint1Used = false
     hint2Used = false
     hint3Used = false
+    gSafeClicks = 3
+    // document.querySelector('.safe-click').innerHTML = `Safe clicks remain: <span>${gSafeClicks}</span>`
     onInitGame()
 }

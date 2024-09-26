@@ -1,38 +1,34 @@
 'use strict'
 
+var gUserSapwnMinesCount = 0
+var gIsDarkMode = false
 
 function changeLvl(lvl) {
     switch (lvl) {
         case 'ez':
             gLevel.size = 4
             gLevel.mines = 2
-            restartGame()
             break;
         case 'med':
             gLevel.size = 8
             gLevel.mines = 14
-            restartGame()
             break;
         case 'hard':
             gLevel.size = 12
             gLevel.mines = 32
-            restartGame()
             break;
 
         case 'custome':
             gLevel.size = +prompt('Choose the size of the board')
             gLevel.mines = +prompt('Choose how much mine you want to spawn')
-            restartGame()
-            manuallyCreateMine()
-            isManuallyCreate = true
             break;
 
         default:
             gLevel.size = 4
             gLevel.mines = 2
-            restartGame()
             break
     }
+    restartGame()
 }
 
 
@@ -144,4 +140,65 @@ function manuallyCreateMine() {
         gBoard[iPos][jPos].isMine = true
     }
 
+}
+
+function manuallyCreateMine() {
+    if (!gIsFirstClick) return
+    isManuallyCreate = true
+    alert(`Choose ${gLevel.mines} cells to make them mines`)
+}
+
+function userSpawnMines(i, j) {
+
+    if (gBoard[i][j].isMine) {
+        alert('You allready put a mine here')
+        return
+    }
+    gBoard[i][j].isMine = true
+    gUserSapwnMinesCount++
+
+
+}
+
+function safeClick() {
+
+    if (!gSafeClicks) return
+
+    var safeCells = findSafeCells(gBoard)
+    console.log('safeCells', safeCells)
+    var safeCellIdx = getRandomInt(0, safeCells.length)
+    var safeCell = safeCells[safeCellIdx]
+    console.log('safeCell', safeCell)
+    var safeCellClass = getClassName(safeCell)
+    var elSafeCell = document.querySelector(`.${safeCellClass}`)
+    safeCells.splice(safeCellIdx, 1)
+    elSafeCell.style = 'border-radius: 0px;'
+    elSafeCell.style = 'border-color: red;'
+    elSafeCell.style = 'border-style: solid;'
+    gSafeClicks--
+    // if (!gSafeClicks)  document.querySelector('.safe-click').innerHTML = 'No more Safe click allowed'
+    elSafeClicks.innerHTML = gSafeClicks
+
+    setTimeout(() => {
+        if (!gBoard[safeCell.i][safeCell.j].isMine)
+            elSafeCell.style = 'border-radius: 0px;'
+        elSafeCell.style = 'border-color: none;'
+        elSafeCell.style = 'border-style: none;'
+
+    }, 2000);
+
+
+}
+
+function switchToDarkMode() {
+    if (gIsDarkMode) {
+        gIsDarkMode = false
+        document.body.style = `background-image: url('/imgs/normalBack.png');`
+    }
+
+    else if (!gIsDarkMode) {
+        gIsDarkMode = true
+        document.body.style = `background-image: url('/imgs/darkBack.png');`
+
+    }
 }

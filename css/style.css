@@ -1,6 +1,9 @@
 body {
-    background-color: grey;
+    zoom: 1.8;
+    background-image: url('/imgs/normalBack.png');
+    background-size: cover;
     text-align: center;
+    color: bisque;
 }
 
 .lvl {
@@ -30,24 +33,28 @@ table {
 
     margin: auto;
     border-collapse: collapse;
-    border-spacing: 0
-    
+    border-spacing: 0;
+
 }
-tr{
+
+tr {
+    display: table-row;
     margin: 0;
     padding: 0;
-    
-    
+    height: 0;
+
+
 }
 
 td {
     padding: 0px;
     border: none;
+    line-height: 0;
 }
 
 .cell {
     cursor: pointer;
-   
+
 }
 
 button {
@@ -66,4 +73,3 @@ button {
 .hint3 {
     cursor: pointer;
 }
-
