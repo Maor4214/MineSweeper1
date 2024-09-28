@@ -1,5 +1,7 @@
 'use strict'
 
+
+
 function getRandomIntInclusive(min, max) {
     return Math.floor(Math.random() * (max - min + 1)) + min
 }
@@ -115,7 +117,6 @@ function showNegs(rowIdx, colIdx) {
 
         for (var j = colIdx - 1; j <= colIdx + 1; j++) {
             if (j < 0 || j >= gBoard[0].length) continue
-            if (i === rowIdx && j === colIdx) continue
 
             if (gBoard[i][j].isMine) renderCell({ i, j }, NORMALMINE)
             if (!gBoard[i][j].isMine) renderCell({ i, j }, getNegsShown(gBoard[i][j].minesAroundCount))
@@ -128,7 +129,7 @@ function showNegs(rowIdx, colIdx) {
 function unShowNegs(rowIdx, colIdx) {
     for (var i = rowIdx - 1; i <= rowIdx + 1; i++) {
         if (i < 0 || i >= gBoard.length) continue
-        
+
 
         for (var j = colIdx - 1; j <= colIdx + 1; j++) {
             if (j < 0 || j >= gBoard[0].length) continue
@@ -148,7 +149,7 @@ function unRevealEmptyNegsCells(i, j) {
 
     gBoard[i][j].isShown = false
     // console.log('should get info')
-    renderCell({ i, j },UNMARKED)
+    renderCell({ i, j }, UNMARKED)
 
     if (!gBoard[i][j].minesAroundCount) {
         unRevealEmptyNegsCells(i - 1, j)
@@ -162,15 +163,42 @@ function unRevealEmptyNegsCells(i, j) {
     }
 }
 
- function findSafeCells(board){
-   var safeCells = []
-    for(var i = 0; i < board.length; i++){
-        for(var j = 0; j < board[0].length; j++){
+function findSafeCells(board) {
+    var safeCells = []
+    for (var i = 0; i < board.length; i++) {
+        for (var j = 0; j < board[0].length; j++) {
             if (gBoard[i][j].isMine) continue
             if (gBoard[i][j].isShown) continue
             if (gBoard[i][j].isMarked) continue
-            var safeCell = {i , j}
+            var safeCell = { i, j }
             safeCells.push(safeCell)
         }
     } return safeCells
- }
+}
+
+
+function findMineCells(board) {
+    var mineCells = []
+    for (var i = 0; i < board.length; i++) {
+        for (var j = 0; j < board[0].length; j++) {
+            if (gBoard[i][j].isMine && !gBoard[i][j].isMarked) {
+                var mineCell = { i, j }
+                mineCells.push(mineCell)
+            }
+        }
+    } return mineCells
+}
+
+function renderNewNegs(board) {
+    for (var i = 0; i < board.length; i++) {
+        for (var j = 0; j < board[0].length; j++) {
+            if (gBoard[i][j].isShown) {
+                renderCell({ i, j }, getNegsShown(gBoard[i][j].minesAroundCount))
+            }
+        }
+    }
+
+}
+
+
+

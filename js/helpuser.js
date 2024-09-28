@@ -2,6 +2,8 @@
 
 var gUserSapwnMinesCount = 0
 var gIsDarkMode = false
+var gIsExtUsed = false
+var gIsHintUsed = false
 
 function changeLvl(lvl) {
     switch (lvl) {
@@ -82,18 +84,21 @@ function hint(num) {
     switch (num) {
         case '1':
             if (hint1Used) return
+            if (gIsHintUsed) return
             isHint = true
             HINT1.innerHTML = HINT_OFF
             hint1Used = true
             break;
         case '2':
             if (hint2Used) return
+            if (gIsHintUsed) return
             HINT2.innerHTML = HINT_OFF
             isHint = true
             hint2Used = true
             break;
         case '3':
             if (hint3Used) return
+            if (gIsHintUsed) return
             isHint = true
             HINT3.innerHTML = HINT_OFF
             hint3Used = true
@@ -165,10 +170,10 @@ function safeClick() {
     if (!gSafeClicks) return
 
     var safeCells = findSafeCells(gBoard)
-    console.log('safeCells', safeCells)
+    // console.log('safeCells', safeCells)
     var safeCellIdx = getRandomInt(0, safeCells.length)
     var safeCell = safeCells[safeCellIdx]
-    console.log('safeCell', safeCell)
+    // console.log('safeCell', safeCell)
     var safeCellClass = getClassName(safeCell)
     var elSafeCell = document.querySelector(`.${safeCellClass}`)
     safeCells.splice(safeCellIdx, 1)
@@ -181,7 +186,7 @@ function safeClick() {
 
     setTimeout(() => {
         if (!gBoard[safeCell.i][safeCell.j].isMine)
-        elSafeCell.style = 'border-radius: 0px;'
+            elSafeCell.style = 'border-radius: 0px;'
         elSafeCell.style = 'border-color: none;'
         elSafeCell.style = 'border-style: none;'
 
@@ -201,4 +206,22 @@ function switchToDarkMode() {
         document.body.style = `background-image: url('imgs/darkBack.png');`
 
     }
+}
+
+
+function extMines() {
+    if (gIsExtUsed) return
+    if (gLevel.mines <= 3) return
+    if (gIsFirstClick) return
+    var mineCells = findMineCells(gBoard)
+    for (var i = 0; i < 3; i++) {
+        var mineCellIdx = getRandomInt(0, mineCells.length)
+        var newMine = mineCells[mineCellIdx]
+        gBoard[newMine.i][newMine.j].isMine = false
+        mineCells.splice(mineCellIdx, 1)
+    }
+    getNegsMines()
+    renderNewNegs(gBoard)
+    gIsExtUsed = true
+
 }

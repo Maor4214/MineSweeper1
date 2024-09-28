@@ -64,6 +64,7 @@ const LOSE_SOUND = `./sounds/losesound.mp3`
 const elLife = document.querySelector('.life span')
 const elEmoji = document.querySelector('.emoji-game')
 const elSafeClicks = document.querySelector('.safe-click span')
+const elBestScore = document.querySelector('.score span')
 
 
 const HINT1 = document.querySelector('.hint1')
@@ -90,8 +91,6 @@ function onInitGame() {
     elLife.innerHTML = gLife
     elSafeClicks.innerHTML = gSafeClicks
     clearInterval(gInterval)
-    
-
 }
 
 
@@ -125,8 +124,6 @@ function renderBoard(board) {
             var className = `cell cell-${i}-${j} floor`
             strHTML += `<td class="cell ${className}" onclick="showCell(${i},${j})" oncontextmenu="toggleMark(event, ${i}, ${j})">`
             if (!cell.isMarked) strHTML += UNMARKED
-            if (cell.isMine) className += ` mine`
-
             strHTML += '</td>'
         }
     }
@@ -151,11 +148,15 @@ function showCell(i, j) {
         gIsFirstClick = false
     }
     if (isHint) {
+        if (gIsHintUsed) return
+        gIsHintUsed = true
         showNegs(i, j)
         setTimeout(() => {
             isHint = false
             unShowNegs(i, j)
+            gIsHintUsed = false
         }, 2000);
+        return
     }
 
     if (gMegaHint.isUsed) {
@@ -275,7 +276,11 @@ function toggleMark(event, i, j) {
     }
     else {
         cell.isMarked = true
-        renderCell({ i, j }, FLAG)
+        if (gBoard[i][j].isShown) {
+            gBoard[i][j].isShown = false
+            renderCell({ i, j }, FLAG)
+        }
+        else { renderCell({ i, j }, FLAG) }
     }
     if (gBoard[i][j].isMine && gBoard[i][j].isMarked) gFlaggedMines++
     if (isWin()) {
@@ -296,6 +301,11 @@ function endGame(result) {
     if (result === 'win') {
         playSound(WIN_SOUND)
         elEmoji.innerHTML = WINING_IMG
+        updateBestScore()
+        //    localStorage.setItem('Easy', document.querySelector('.timer').innerText )
+        //    console.log( document.querySelector('.timer').innerText)
+
+
 
     }
 
@@ -361,7 +371,7 @@ function restartGame() {
         timeUsed: 1
     }
     gFirstClickInMegaHint = null
-    gUserSapwnMinesCount = 0 
+    gUserSapwnMinesCount = 0
     HINT1.innerHTML = HINT_ON
     HINT2.innerHTML = HINT_ON
     HINT3.innerHTML = HINT_ON
@@ -369,6 +379,9 @@ function restartGame() {
     hint2Used = false
     hint3Used = false
     gSafeClicks = 3
+    gIsExtUsed = false
+    gIsHintUsed = false
     // document.querySelector('.safe-click').innerHTML = `Safe clicks remain: <span>${gSafeClicks}</span>`
     onInitGame()
 }
+
