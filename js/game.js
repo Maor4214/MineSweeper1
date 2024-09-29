@@ -301,7 +301,7 @@ function endGame(result) {
     if (result === 'win') {
         playSound(WIN_SOUND)
         elEmoji.innerHTML = WINING_IMG
-        updateBestScore()
+        // updateBestScore()
         //    localStorage.setItem('Easy', document.querySelector('.timer').innerText )
         //    console.log( document.querySelector('.timer').innerText)
 
